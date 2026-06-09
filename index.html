@@ -461,7 +461,6 @@
                     <li><i class="fas fa-pen"></i> Write clear, detailed answers</li>
                     <li><i class="fas fa-code"></i> Code examples are encouraged where relevant</li>
                     <li><i class="fas fa-stopwatch"></i> Manage your time wisely</li>
-                    <li><i class="fas fa-save"></i> Answers are auto-saved as you type</li>
                 </ul>
             </div>
 
@@ -534,11 +533,11 @@
                 "How would you troubleshoot a production outage? Walk me through your process."
             ],
             "Network Engineer": [
-                "Explain the OSI model. What happens at each layer and what protocols operate there?",
-                "What is the difference between TCP and UDP? When would you choose each in network design?",
-                "How does subnetting work? Explain CIDR notation and how you calculate usable IP addresses.",
-                "What is BGP and how does it work? When is it used in enterprise networks?",
-                "Explain how VPNs work. Compare IPsec and SSL/TLS VPNs."
+                "Explain the OSI model. What happens at each layer?",
+                "What is the difference between TCP and UDP? When would you use each?",
+                "How does subnetting work? Explain CIDR notation.",
+                "What is BGP and how does it work?",
+                "Explain how VPNs work (IPsec vs SSL)."
             ],
             "Data Scientist": [
                 "Explain the difference between supervised and unsupervised learning. Provide examples of each.",
@@ -587,6 +586,14 @@
         document.getElementById('positionBadge').textContent = position;
 
         // ============================================
+        // CLEAR STORAGE ON PAGE LOAD - No saved answers
+        // ============================================
+        const storageKey = `assessment_${candidateEmail}`;
+        if (localStorage.getItem(storageKey)) {
+            localStorage.removeItem(storageKey);
+        }
+
+        // ============================================
         // LOAD POSITION-SPECIFIC QUESTIONS
         // ============================================
         const questions = positionQuestions[position] || positionQuestions["Frontend Developer"];
@@ -608,45 +615,16 @@
         });
 
         // ============================================
-        // AUTO-SAVE FUNCTIONALITY (local storage)
-        // ============================================
-        function saveAnswers() {
-            const answers = {};
-            for (let i = 1; i <= questions.length; i++) {
-                const answer = document.getElementById(`q${i}`).value;
-                answers[`q${i}`] = answer;
-            }
-            localStorage.setItem(`assessment_${candidateEmail}`, JSON.stringify(answers));
-        }
-
-        function loadAnswers() {
-            const saved = localStorage.getItem(`assessment_${candidateEmail}`);
-            if (saved) {
-                const answers = JSON.parse(saved);
-                for (let i = 1; i <= questions.length; i++) {
-                    if (answers[`q${i}`]) {
-                        document.getElementById(`q${i}`).value = answers[`q${i}`];
-                    }
-                }
-            }
-        }
-
-        // Auto-save every 10 seconds
-        setInterval(saveAnswers, 10000);
-        window.addEventListener('beforeunload', saveAnswers);
-        loadAnswers();
-
-        // ============================================
         // TIMER FUNCTION (60 MINUTES)
         // ============================================
-        let timeLeft = 60 * 60; // 60 minutes
+        let timeLeft = 60 * 60;
         const timerElement = document.getElementById('timer');
         
         const timerInterval = setInterval(() => {
             if (timeLeft <= 0) {
                 clearInterval(timerInterval);
                 document.getElementById('submitBtn').disabled = true;
-                showStatus('error', 'Time expired! Your assessment will be submitted automatically.', 'error');
+                showStatus('Time expired! Your assessment will be submitted automatically.', 'error');
                 document.getElementById('assessmentForm').dispatchEvent(new Event('submit'));
                 return;
             }
@@ -656,9 +634,8 @@
             const seconds = timeLeft % 60;
             timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
             
-            // Warning when 5 minutes left
             if (timeLeft === 300) {
-                showStatus('warning', '⚠️ 5 minutes remaining! Please complete your answers.', 'info');
+                showStatus('⚠️ 5 minutes remaining! Please complete your answers.', 'info');
             }
         }, 1000);
 
@@ -673,12 +650,12 @@
                 tabSwitchCount++;
                 
                 if (!warningShown) {
-                    showStatus('error', `⚠️ WARNING: Tab switching detected (${tabSwitchCount}/3). Your assessment is being monitored.`, 'error');
+                    showStatus(`⚠️ WARNING: Tab switching detected (${tabSwitchCount}/3). Your assessment is being monitored.`, 'error');
                     warningShown = true;
                 }
                 
                 if (tabSwitchCount >= 3) {
-                    showStatus('error', '❌ ASSESSMENT AUTO-SUBMITTED: Multiple tab switches detected. This assessment will be flagged for review.', 'error');
+                    showStatus('❌ ASSESSMENT AUTO-SUBMITTED: Multiple tab switches detected. This assessment will be flagged for review.', 'error');
                     clearInterval(timerInterval);
                     document.getElementById('submitBtn').disabled = true;
                     document.getElementById('assessmentForm').dispatchEvent(new Event('submit'));
@@ -691,6 +668,7 @@
         // ============================================
         // FORM SUBMISSION
         // ============================================
+        // UPDATE THIS URL TO YOUR N8N WEBHOOK URL
         const WEBHOOK_URL = 'https://fadysoltanm.app.n8n.cloud/webhook/candidate-assessment';
         
         document.getElementById('assessmentForm').addEventListener('submit', async (e) => {
@@ -713,7 +691,7 @@
                 submitted_at: new Date().toISOString()
             };
             
-            showStatus('info', '📤 Submitting your assessment...', 'info');
+            showStatus('📤 Submitting your assessment...', 'info');
             document.getElementById('submitBtn').disabled = true;
             
             try {
@@ -726,21 +704,22 @@
                 const result = await response.json();
                 
                 if (response.ok) {
-                    showStatus('success', `✅ Assessment submitted successfully! Score: ${result.score}/100. ${result.message}`, 'success');
-                    localStorage.removeItem(`assessment_${candidateEmail}`);
+                    showStatus(`✅ Assessment submitted successfully! Score: ${result.score}/100. ${result.message}`, 'success');
+                    // Clear any saved answers after successful submission
+                    localStorage.removeItem(storageKey);
                 } else {
                     throw new Error(result.message || 'Submission failed');
                 }
             } catch (error) {
-                showStatus('error', `❌ Error: ${error.message}. Please try again or contact support.`, 'error');
+                showStatus(`❌ Error: ${error.message}. Please try again or contact support.`, 'error');
                 document.getElementById('submitBtn').disabled = false;
             }
         });
         
-        function showStatus(type, message, className) {
+        function showStatus(message, type) {
             const statusDiv = document.getElementById('status');
-            statusDiv.className = `status ${className}`;
-            statusDiv.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i> ${message}`;
+            statusDiv.className = `status ${type}`;
+            statusDiv.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : (type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle')}"></i> ${message}`;
         }
     </script>
 </body>

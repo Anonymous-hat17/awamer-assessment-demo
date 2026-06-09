@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Technical Assessment - AWAMER EL SHABAKA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            min-height: 100vh;
+            padding: 40px 24px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            gap: 28px;
+        }
+
+        /* ========== INSTRUCTIONS PANEL (LEFT) ========== */
+        .instructions-panel {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 28px;
+            border: 1px solid rgba(79, 163, 224, 0.2);
+            overflow: hidden;
+            position: sticky;
+            top: 24px;
+            height: fit-content;
+        }
+
+        .panel-header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            padding: 24px;
+            text-align: center;
+        }
+
+        .panel-header i {
+            font-size: 48px;
+            color: white;
+            margin-bottom: 12px;
+        }
+
+        .panel-header h2 {
+            color: white;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .panel-header p {
+            color: rgba(255,255,255,0.7);
+            font-size: 13px;
+        }
+
+        .instruction-section {
+            padding: 20px 24px;
+            border-bottom: 1px solid rgba(79, 163, 224, 0.1);
+        }
+
+        .instruction-section:last-child {
+            border-bottom: none;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+            color: #4fa3e0;
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .section-title i {
+            font-size: 18px;
+        }
+
+        .instruction-list {
+            list-style: none;
+            margin-top: 8px;
+        }
+
+        .instruction-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 14px;
+            color: #cbd5e1;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .instruction-list li i {
+            color: #4fa3e0;
+            font-size: 14px;
+            margin-top: 2px;
+            min-width: 18px;
+        }
+
+        .instruction-list li.warning i {
+            color: #e8b84b;
+        }
+
+        .instruction-list li.danger i {
+            color: #e05454;
+        }
+
+        .rule-box {
+            background: rgba(224, 84, 84, 0.1);
+            border: 1px solid rgba(224, 84, 84, 0.3);
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 16px;
+        }
+
+        .rule-box p {
+            color: #e05454;
+            font-size: 12px;
+            line-height: 1.5;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .timer-box {
+            background: rgba(46, 204, 143, 0.1);
+            border: 1px solid rgba(46, 204, 143, 0.3);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            margin-top: 16px;
+        }
+
+        .timer-box .timer-label {
+            font-size: 11px;
+            color: #2ecc8f;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .timer-box .timer-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #2ecc8f;
+            font-family: monospace;
+            margin-top: 8px;
+        }
+
+        /* ========== ASSESSMENT PANEL (RIGHT) ========== */
+        .assessment-panel {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 28px;
+            border: 1px solid rgba(79, 163, 224, 0.2);
+            overflow: hidden;
+        }
+
+        .assessment-header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            padding: 28px 32px;
+        }
+
+        .assessment-header h1 {
+            color: white;
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .assessment-header p {
+            color: rgba(255,255,255,0.7);
+            font-size: 14px;
+        }
+
+        .candidate-info {
+            background: rgba(0,0,0,0.3);
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+            border-bottom: 1px solid rgba(79, 163, 224, 0.1);
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #cbd5e1;
+            font-size: 13px;
+        }
+
+        .info-item i {
+            color: #4fa3e0;
+            width: 18px;
+        }
+
+        .info-item strong {
+            color: white;
+            font-weight: 600;
+        }
+
+        .position-badge {
+            background: rgba(79, 163, 224, 0.15);
+            border: 1px solid rgba(79, 163, 224, 0.3);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            color: #4fa3e0;
+        }
+
+        .questions-container {
+            padding: 32px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .question-card {
+            background: rgba(30, 41, 59, 0.5);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid rgba(79, 163, 224, 0.1);
+            transition: all 0.3s;
+        }
+
+        .question-card:focus-within {
+            border-color: #4fa3e0;
+            box-shadow: 0 0 0 2px rgba(79, 163, 224, 0.2);
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .question-number {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 14px;
+            color: white;
+        }
+
+        .question-tag {
+            font-size: 11px;
+            color: #4fa3e0;
+            background: rgba(79, 163, 224, 0.1);
+            padding: 4px 10px;
+            border-radius: 12px;
+        }
+
+        .question-text {
+            color: white;
+            font-size: 16px;
+            font-weight: 500;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .answer-area {
+            width: 100%;
+            padding: 16px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(79, 163, 224, 0.2);
+            border-radius: 12px;
+            color: white;
+            font-family: 'Inter', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            resize: vertical;
+            min-height: 120px;
+            transition: all 0.3s;
+        }
+
+        .answer-area:focus {
+            outline: none;
+            border-color: #4fa3e0;
+            background: rgba(0,0,0,0.5);
+        }
+
+        .answer-area::placeholder {
+            color: #64748b;
+        }
+
+        .submit-btn {
+            width: calc(100% - 64px);
+            margin: 0 32px 32px 32px;
+            padding: 18px;
+            background: linear-gradient(135deg, #2ecc8f 0%, #27ae60 100%);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .submit-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(46, 204, 143, 0.3);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .status {
+            margin: 0 32px 32px 32px;
+            padding: 16px;
+            border-radius: 12px;
+            display: none;
+            font-size: 14px;
+        }
+
+        .status.success {
+            display: block;
+            background: rgba(46, 204, 143, 0.15);
+            border: 1px solid rgba(46, 204, 143, 0.3);
+            color: #2ecc8f;
+        }
+
+        .status.error {
+            display: block;
+            background: rgba(224, 84, 84, 0.15);
+            border: 1px solid rgba(224, 84, 84, 0.3);
+            color: #e05454;
+        }
+
+        .status.info {
+            display: block;
+            background: rgba(79, 163, 224, 0.15);
+            border: 1px solid rgba(79, 163, 224, 0.3);
+            color: #4fa3e0;
+        }
+
+        /* Scrollbar */
+        .questions-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .questions-container::-webkit-scrollbar-track {
+            background: rgba(30, 41, 59, 0.5);
+            border-radius: 10px;
+        }
+
+        .questions-container::-webkit-scrollbar-thumb {
+            background: #4fa3e0;
+            border-radius: 10px;
+        }
+
+        @media (max-width: 900px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            .instructions-panel {
+                position: relative;
+                top: 0;
+            }
+        }
+
+        /* Proctoring warning animation */
+        @keyframes pulse-warning {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .proctoring-active {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(224, 84, 84, 0.9);
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 11px;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            animation: pulse-warning 2s infinite;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="proctoring-active" id="proctoringBadge">
+        <i class="fas fa-video"></i>
+        <span>Proctoring Active • Recording in Progress</span>
+    </div>
+
+    <div class="container">
+        <!-- LEFT PANEL: INSTRUCTIONS -->
+        <div class="instructions-panel">
+            <div class="panel-header">
+                <i class="fas fa-clipboard-list"></i>
+                <h2>Assessment Instructions</h2>
+                <p>Please read carefully before starting</p>
+            </div>
+
+            <div class="instruction-section">
+                <div class="section-title">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Assessment Details</span>
+                </div>
+                <ul class="instruction-list">
+                    <li><i class="fas fa-tasks"></i> Type: Technical Skills Assessment</li>
+                    <li><i class="far fa-clock"></i> Duration: 60 Minutes</li>
+                    <li><i class="fas fa-question-circle"></i> Questions: 5 Open-Ended Questions</li>
+                    <li><i class="fas fa-chart-line"></i> Passing Score: 70%</li>
+                </ul>
+            </div>
+
+            <div class="instruction-section">
+                <div class="section-title">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span>Important Rules</span>
+                </div>
+                <ul class="instruction-list">
+                    <li class="danger"><i class="fas fa-mobile-alt"></i> Put away your phone and any electronic devices</li>
+                    <li class="danger"><i class="fas fa-video"></i> Keep your camera ON at all times</li>
+                    <li class="danger"><i class="fas fa-eye"></i> Do NOT look away from the screen repeatedly</li>
+                    <li class="danger"><i class="fas fa-arrows-alt"></i> Do NOT switch tabs or leave the page</li>
+                    <li class="danger"><i class="fas fa-user-friends"></i> No external help or communication</li>
+                </ul>
+            </div>
+
+            <div class="instruction-section">
+                <div class="section-title">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Guidelines</span>
+                </div>
+                <ul class="instruction-list">
+                    <li><i class="fas fa-pen"></i> Write clear, detailed answers</li>
+                    <li><i class="fas fa-code"></i> Code examples are encouraged where relevant</li>
+                    <li><i class="fas fa-stopwatch"></i> Manage your time wisely</li>
+                    <li><i class="fas fa-save"></i> Answers are auto-saved as you type</li>
+                </ul>
+            </div>
+
+            <div class="instruction-section">
+                <div class="rule-box">
+                    <p><i class="fas fa-shield-alt"></i> Violation of proctoring rules may result in automatic disqualification. Your screen and camera are being monitored.</p>
+                </div>
+                <div class="timer-box">
+                    <div class="timer-label"><i class="far fa-hourglass-half"></i> Time Remaining</div>
+                    <div class="timer-value" id="timer">60:00</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT PANEL: ASSESSMENT QUESTIONS -->
+        <div class="assessment-panel">
+            <div class="assessment-header">
+                <h1><i class="fas fa-microphone-alt"></i> Technical Assessment</h1>
+                <p>AWAMER EL SHABAKA - Technical Interview</p>
+            </div>
+
+            <div class="candidate-info" id="candidateInfo">
+                <div class="info-item"><i class="fas fa-user"></i> Candidate: <strong id="candidateNameDisplay">Loading...</strong></div>
+                <div class="info-item"><i class="fas fa-envelope"></i> Email: <strong id="candidateEmailDisplay">Loading...</strong></div>
+                <div class="info-item"><i class="fas fa-briefcase"></i> Position: <span class="position-badge" id="positionBadge">Loading...</span></div>
+            </div>
+
+            <form id="assessmentForm">
+                <input type="hidden" id="candidate_name" name="candidate_name">
+                <input type="hidden" id="candidate_email" name="candidate_email">
+                <input type="hidden" id="position_applied" name="position_applied">
+                
+                <div class="questions-container" id="questionsContainer">
+                    <!-- Questions will be dynamically loaded here -->
+                </div>
+                
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    <i class="fas fa-paper-plane"></i> Submit Assessment
+                </button>
+            </form>
+            
+            <div id="status" class="status"></div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // POSITION-SPECIFIC QUESTIONS
+        // ============================================
+        const positionQuestions = {
+            "Frontend Developer": [
+                "Explain the difference between 'let', 'const', and 'var' in JavaScript. When would you use each?",
+                "What is the CSS box model? Describe its components and how they affect element layout.",
+                "How does responsive web design work? What techniques and technologies do you use to achieve it?",
+                "Explain the concept of the virtual DOM. How does it improve performance in modern frameworks?",
+                "What are JavaScript closures? Provide a practical example of where you would use one."
+            ],
+            "Backend Developer": [
+                "Explain the difference between SQL and NoSQL databases. When would you choose each for a project?",
+                "What is RESTful API design? List and explain the key principles of REST.",
+                "How does authentication work in web applications? Explain JWT vs session-based authentication.",
+                "What is database indexing? How does it improve query performance and what are the trade-offs?",
+                "Explain the event loop in Node.js. How does it handle asynchronous operations?"
+            ],
+            "DevOps Engineer": [
+                "What is CI/CD? Describe a complete pipeline from code commit to production deployment.",
+                "How do containers differ from virtual machines? What are the advantages of each?",
+                "Explain Infrastructure as Code (IaC). What tools have you used and what problems does it solve?",
+                "What is Kubernetes? What problems does it solve in container orchestration?",
+                "How would you troubleshoot a production outage? Walk me through your process."
+            ],
+            "Network Engineer": [
+                "Explain the OSI model. What happens at each layer and what protocols operate there?",
+                "What is the difference between TCP and UDP? When would you choose each in network design?",
+                "How does subnetting work? Explain CIDR notation and how you calculate usable IP addresses.",
+                "What is BGP and how does it work? When is it used in enterprise networks?",
+                "Explain how VPNs work. Compare IPsec and SSL/TLS VPNs."
+            ],
+            "Data Scientist": [
+                "Explain the difference between supervised and unsupervised learning. Provide examples of each.",
+                "What is overfitting? How do you detect and prevent it in machine learning models?",
+                "Explain the bias-variance tradeoff. How does it affect model performance?",
+                "How do you handle missing data in a dataset? Describe multiple approaches and their trade-offs.",
+                "What is the difference between correlation and causation? Why is this distinction important?"
+            ],
+            "Cybersecurity Analyst": [
+                "Explain the CIA triad (Confidentiality, Integrity, Availability). Provide examples of each.",
+                "What is the difference between a vulnerability, threat, and risk? How are they related?",
+                "Explain how SQL injection works. How would you prevent it in a web application?",
+                "What is the principle of least privilege? Why is it important in security design?",
+                "Explain the difference between symmetric and asymmetric encryption. When would you use each?"
+            ],
+            "Cloud Architect": [
+                "Explain the difference between IaaS, PaaS, and SaaS. Provide real-world examples of each.",
+                "What is a VPC? How would you design a secure network in the cloud with public and private subnets?",
+                "Explain the difference between scaling up vs scaling out. When would you choose each?",
+                "How would you design a highly available multi-region application? What components are needed?",
+                "What is a CDN and when would you use it? How does it improve performance and availability?"
+            ],
+            "Mobile Developer": [
+                "Explain the difference between native and cross-platform development. What are the trade-offs?",
+                "How do you manage state in mobile applications? Describe different state management approaches.",
+                "Explain the mobile app lifecycle (iOS or Android). What happens at each stage?",
+                "How do you handle offline storage in mobile apps? What technologies would you use?",
+                "Explain the differences between iOS and Android development approaches, tools, and patterns."
+            ]
+        };
+
+        // ============================================
+        // GET CANDIDATE INFO FROM URL
+        // ============================================
+        const urlParams = new URLSearchParams(window.location.search);
+        const candidateName = urlParams.get('name') || 'Test Candidate';
+        const candidateEmail = urlParams.get('email') || 'test@example.com';
+        const position = urlParams.get('position') || 'Frontend Developer';
+
+        // Populate candidate info
+        document.getElementById('candidate_name').value = candidateName;
+        document.getElementById('candidate_email').value = candidateEmail;
+        document.getElementById('position_applied').value = position;
+        document.getElementById('candidateNameDisplay').textContent = candidateName;
+        document.getElementById('candidateEmailDisplay').textContent = candidateEmail;
+        document.getElementById('positionBadge').textContent = position;
+
+        // ============================================
+        // LOAD POSITION-SPECIFIC QUESTIONS
+        // ============================================
+        const questions = positionQuestions[position] || positionQuestions["Frontend Developer"];
+        const container = document.getElementById('questionsContainer');
+        
+        container.innerHTML = '';
+        questions.forEach((q, index) => {
+            const questionCard = document.createElement('div');
+            questionCard.className = 'question-card';
+            questionCard.innerHTML = `
+                <div class="question-header">
+                    <div class="question-number">${index + 1}</div>
+                    <div class="question-tag"><i class="fas fa-pencil-alt"></i> Open Ended</div>
+                </div>
+                <div class="question-text">${q}</div>
+                <textarea class="answer-area" name="q${index + 1}" id="q${index + 1}" placeholder="Type your answer here... Be specific, use examples, and explain your reasoning." required></textarea>
+            `;
+            container.appendChild(questionCard);
+        });
+
+        // ============================================
+        // AUTO-SAVE FUNCTIONALITY (local storage)
+        // ============================================
+        function saveAnswers() {
+            const answers = {};
+            for (let i = 1; i <= questions.length; i++) {
+                const answer = document.getElementById(`q${i}`).value;
+                answers[`q${i}`] = answer;
+            }
+            localStorage.setItem(`assessment_${candidateEmail}`, JSON.stringify(answers));
+        }
+
+        function loadAnswers() {
+            const saved = localStorage.getItem(`assessment_${candidateEmail}`);
+            if (saved) {
+                const answers = JSON.parse(saved);
+                for (let i = 1; i <= questions.length; i++) {
+                    if (answers[`q${i}`]) {
+                        document.getElementById(`q${i}`).value = answers[`q${i}`];
+                    }
+                }
+            }
+        }
+
+        // Auto-save every 10 seconds
+        setInterval(saveAnswers, 10000);
+        window.addEventListener('beforeunload', saveAnswers);
+        loadAnswers();
+
+        // ============================================
+        // TIMER FUNCTION (60 MINUTES)
+        // ============================================
+        let timeLeft = 60 * 60; // 60 minutes
+        const timerElement = document.getElementById('timer');
+        
+        const timerInterval = setInterval(() => {
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                document.getElementById('submitBtn').disabled = true;
+                showStatus('error', 'Time expired! Your assessment will be submitted automatically.', 'error');
+                document.getElementById('assessmentForm').dispatchEvent(new Event('submit'));
+                return;
+            }
+            
+            timeLeft--;
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            // Warning when 5 minutes left
+            if (timeLeft === 300) {
+                showStatus('warning', '⚠️ 5 minutes remaining! Please complete your answers.', 'info');
+            }
+        }, 1000);
+
+        // ============================================
+        // PROCTORING - Tab/window change detection
+        // ============================================
+        let tabSwitchCount = 0;
+        let warningShown = false;
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                tabSwitchCount++;
+                
+                if (!warningShown) {
+                    showStatus('error', `⚠️ WARNING: Tab switching detected (${tabSwitchCount}/3). Your assessment is being monitored.`, 'error');
+                    warningShown = true;
+                }
+                
+                if (tabSwitchCount >= 3) {
+                    showStatus('error', '❌ ASSESSMENT AUTO-SUBMITTED: Multiple tab switches detected. This assessment will be flagged for review.', 'error');
+                    clearInterval(timerInterval);
+                    document.getElementById('submitBtn').disabled = true;
+                    document.getElementById('assessmentForm').dispatchEvent(new Event('submit'));
+                }
+            } else {
+                warningShown = false;
+            }
+        });
+
+        // ============================================
+        // FORM SUBMISSION
+        // ============================================
+        const WEBHOOK_URL = 'https://fadysoltanm.app.n8n.cloud/webhook/candidate-assessment';
+        
+        document.getElementById('assessmentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            clearInterval(timerInterval);
+            
+            // Collect all answers
+            const answers = {};
+            for (let i = 1; i <= questions.length; i++) {
+                answers[`q${i}`] = document.getElementById(`q${i}`).value;
+            }
+            
+            const submissionData = {
+                candidate_name: candidateName,
+                candidate_email: candidateEmail,
+                position_applied: position,
+                answers: answers,
+                tab_switches: tabSwitchCount,
+                submitted_at: new Date().toISOString()
+            };
+            
+            showStatus('info', '📤 Submitting your assessment...', 'info');
+            document.getElementById('submitBtn').disabled = true;
+            
+            try {
+                const response = await fetch(WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(submissionData)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showStatus('success', `✅ Assessment submitted successfully! Score: ${result.score}/100. ${result.message}`, 'success');
+                    localStorage.removeItem(`assessment_${candidateEmail}`);
+                } else {
+                    throw new Error(result.message || 'Submission failed');
+                }
+            } catch (error) {
+                showStatus('error', `❌ Error: ${error.message}. Please try again or contact support.`, 'error');
+                document.getElementById('submitBtn').disabled = false;
+            }
+        });
+        
+        function showStatus(type, message, className) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.className = `status ${className}`;
+            statusDiv.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i> ${message}`;
+        }
+    </script>
+</body>
+</html>

@@ -28,7 +28,6 @@
             gap: 28px;
         }
 
-        /* ========== INSTRUCTIONS PANEL (LEFT) ========== */
         .instructions-panel {
             background: rgba(15, 23, 42, 0.8);
             backdrop-filter: blur(10px);
@@ -111,10 +110,6 @@
             min-width: 18px;
         }
 
-        .instruction-list li.warning i {
-            color: #e8b84b;
-        }
-
         .instruction-list li.danger i {
             color: #e05454;
         }
@@ -160,7 +155,6 @@
             margin-top: 8px;
         }
 
-        /* ========== ASSESSMENT PANEL (RIGHT) ========== */
         .assessment-panel {
             background: rgba(15, 23, 42, 0.8);
             backdrop-filter: blur(10px);
@@ -361,7 +355,6 @@
             color: #4fa3e0;
         }
 
-        /* Scrollbar */
         .questions-container::-webkit-scrollbar {
             width: 6px;
         }
@@ -386,7 +379,6 @@
             }
         }
 
-        /* Proctoring warning animation */
         @keyframes pulse-warning {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
@@ -417,7 +409,6 @@
     </div>
 
     <div class="container">
-        <!-- LEFT PANEL: INSTRUCTIONS -->
         <div class="instructions-panel">
             <div class="panel-header">
                 <i class="fas fa-clipboard-list"></i>
@@ -475,7 +466,6 @@
             </div>
         </div>
 
-        <!-- RIGHT PANEL: ASSESSMENT QUESTIONS -->
         <div class="assessment-panel">
             <div class="assessment-header">
                 <h1><i class="fas fa-microphone-alt"></i> Technical Assessment</h1>
@@ -507,9 +497,6 @@
     </div>
 
     <script>
-        // ============================================
-        // POSITION-SPECIFIC QUESTIONS
-        // ============================================
         const positionQuestions = {
             "Frontend Developer": [
                 "Explain the difference between 'let', 'const', and 'var' in JavaScript. When would you use each?",
@@ -569,15 +556,11 @@
             ]
         };
 
-        // ============================================
-        // GET CANDIDATE INFO FROM URL
-        // ============================================
         const urlParams = new URLSearchParams(window.location.search);
         const candidateName = urlParams.get('name') || 'Test Candidate';
         const candidateEmail = urlParams.get('email') || 'test@example.com';
         const position = urlParams.get('position') || 'Frontend Developer';
 
-        // Populate candidate info
         document.getElementById('candidate_name').value = candidateName;
         document.getElementById('candidate_email').value = candidateEmail;
         document.getElementById('position_applied').value = position;
@@ -585,17 +568,6 @@
         document.getElementById('candidateEmailDisplay').textContent = candidateEmail;
         document.getElementById('positionBadge').textContent = position;
 
-        // ============================================
-        // CLEAR STORAGE ON PAGE LOAD - No saved answers
-        // ============================================
-        const storageKey = `assessment_${candidateEmail}`;
-        if (localStorage.getItem(storageKey)) {
-            localStorage.removeItem(storageKey);
-        }
-
-        // ============================================
-        // LOAD POSITION-SPECIFIC QUESTIONS
-        // ============================================
         const questions = positionQuestions[position] || positionQuestions["Frontend Developer"];
         const container = document.getElementById('questionsContainer');
         
@@ -614,9 +586,6 @@
             container.appendChild(questionCard);
         });
 
-        // ============================================
-        // TIMER FUNCTION (60 MINUTES)
-        // ============================================
         let timeLeft = 60 * 60;
         const timerElement = document.getElementById('timer');
         
@@ -639,9 +608,6 @@
             }
         }, 1000);
 
-        // ============================================
-        // PROCTORING - Tab/window change detection
-        // ============================================
         let tabSwitchCount = 0;
         let warningShown = false;
 
@@ -665,10 +631,7 @@
             }
         });
 
-        // ============================================
-        // FORM SUBMISSION
-        // ============================================
-        // UPDATE THIS URL TO YOUR N8N WEBHOOK URL
+        // WEBHOOK URL - PRODUCTION MODE
         const WEBHOOK_URL = 'https://fadysoltanm.app.n8n.cloud/webhook/candidate-assessment';
         
         document.getElementById('assessmentForm').addEventListener('submit', async (e) => {
@@ -676,7 +639,12 @@
             
             clearInterval(timerInterval);
             
-            // Collect all answers
+            // Collect questions and answers
+            const questionTexts = [];
+            document.querySelectorAll('.question-text').forEach(el => {
+                questionTexts.push(el.textContent);
+            });
+            
             const answers = {};
             for (let i = 1; i <= questions.length; i++) {
                 answers[`q${i}`] = document.getElementById(`q${i}`).value;
@@ -686,6 +654,7 @@
                 candidate_name: candidateName,
                 candidate_email: candidateEmail,
                 position_applied: position,
+                questions: questionTexts,
                 answers: answers,
                 tab_switches: tabSwitchCount,
                 submitted_at: new Date().toISOString()
@@ -704,9 +673,7 @@
                 const result = await response.json();
                 
                 if (response.ok) {
-                    showStatus(`✅ Assessment submitted successfully! Score: ${result.score}/100. ${result.message}`, 'success');
-                    // Clear any saved answers after successful submission
-                    localStorage.removeItem(storageKey);
+                    showStatus(`✅ Assessment submitted successfully! Score: ${result.score || result.total_score}/100.`, 'success');
                 } else {
                     throw new Error(result.message || 'Submission failed');
                 }
